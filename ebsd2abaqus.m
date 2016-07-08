@@ -132,7 +132,7 @@ function ebsd2abaqus(ebsd,angle)
     uniPhases = unique(phases);
     phaseNames = ebsd.mineralList;
     for ii = 1:numel(unique(phases))
-        fprintf(inpFile,'\n*Elset, elset=Phase-%s\n',phaseNames{ii+1});
+        fprintf(inpFile,'\n*Elset, elset=Phase-%s\n',phaseNames{ii});
         fprintf(inpFile,'%d, %d, %d, %d, %d, %d, %d, %d, %d\n',elem(phases==uniPhases(ii))');
     end
     
