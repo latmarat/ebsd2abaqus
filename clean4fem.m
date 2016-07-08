@@ -76,7 +76,6 @@ function [ret,indSmallCi] = clean4fem(ebsd,minSize,minCi,angle)
 
         v = cleanGrains.V(poly{ii},:);
         inside = inpolygon(ebsd.x,ebsd.y,v(:,1),v(:,2));
-e
         ebsd(inside).grainId = cleanGrains(ii).id;
         ebsd(inside).phase = cleanGrains(ii).phase;
         ebsd(inside).rotations = cleanGrains(ii).meanOrientation;
