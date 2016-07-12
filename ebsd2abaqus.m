@@ -26,10 +26,20 @@ function ebsd2abaqus(ebsd,angle)
     % --------------------------
     
     %% preliminarities
+    hasNotIndexed = strcmp(ebsd.mineralList,'notIndexed') & strcmp(ebsd.mineralList,'notIndexed');
     % check if ebsd on hex grid and convert to sqr if so
     if length(ebsd.unitCell) == 6
         ebsd = fill(ebsd);
-        fprintf('WARNING! EBSD was on hex grid and so was converted to sqr grid using fill')
+        fprintf('WARNING! EBSD was on hex grid and so was converted to sqr grid using fill function\n')
+    % check if ebsd on hex grid and convert to sqr if so
+    elseif any(hasNotIndexed) == 1
+        ebsdNotInd = ebsd(ebsd.mineralList(hasNotIndexed));
+        ebsd(ebsd.mineralList(hasNotIndexed)) = [];
+        figure; plot(ebsd)
+        ebsd = fill(ebsd);
+        figure; plot(ebsd)
+        numNotIndPx = numel(ebsdNotInd.x);
+        fprintf('WARNING! EBSD had %d non-indexed pixels and so was filled using fill function\n', numNotIndPx)
     end
     
     % get step size from input
@@ -131,6 +141,7 @@ function ebsd2abaqus(ebsd,angle)
     % create element sets containing phases
     uniPhases = unique(phases);
     phaseNames = ebsd.mineralList;
+    phaseNames = phaseNames(~strcmp(phaseNames,'notIndexed') & ~strcmp(phaseNames,'notIndexed'));
     for ii = 1:numel(unique(phases))
         fprintf(inpFile,'\n*Elset, elset=Phase-%s\n',phaseNames{ii});
         fprintf(inpFile,'%d, %d, %d, %d, %d, %d, %d, %d, %d\n',elem(phases==uniPhases(ii))');
@@ -138,7 +149,7 @@ function ebsd2abaqus(ebsd,angle)
     
     % create sections for phases
     for ii = 1:numel(uniPhases)
-        fprintf(inpFile,'\n**Section: Section-%s\n*Solid Section, elset=Phase-%s, material=%s\n',phaseNames{ii+1},phaseNames{ii+1},phaseNames{ii+1});
+        fprintf(inpFile,'\n**Section: Section-%s\n*Solid Section, elset=Phase-%s, material=%s\n',phaseNames{ii},phaseNames{ii},phaseNames{ii});
     end
     fprintf(inpFile,'\n');
 
