@@ -31,15 +31,15 @@ function ebsd2abaqus(ebsd,angle)
     if length(ebsd.unitCell) == 6
         ebsd = fill(ebsd);
         fprintf('WARNING! EBSD was on hex grid and so was converted to sqr grid using fill function\n')
+        figure; plot(ebsd)
     % check if ebsd on hex grid and convert to sqr if so
     elseif any(hasNotIndexed) == 1
         ebsdNotInd = ebsd(ebsd.mineralList(hasNotIndexed));
         ebsd(ebsd.mineralList(hasNotIndexed)) = [];
-        figure; plot(ebsd)
         ebsd = fill(ebsd);
-        figure; plot(ebsd)
         numNotIndPx = numel(ebsdNotInd.x);
         fprintf('WARNING! EBSD had %d non-indexed pixels and so was filled using fill function\n', numNotIndPx)
+        figure; plot(ebsd)
     end
     
     % get step size from input
@@ -49,7 +49,6 @@ function ebsd2abaqus(ebsd,angle)
     step(3) = min(dxy); 
     % set inp file name
     inpFileName = 'ebsd.inp';
-%     angle = 15;
     
     % reconstruct grains
     [~,ebsd.grainId,ebsd.mis2mean] = calcGrains(ebsd,'angle',angle*degree);
